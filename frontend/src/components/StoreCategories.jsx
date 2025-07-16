@@ -1,9 +1,5 @@
 import { Grid, Typography, Box, Paper } from '@mui/material';
-
-const temporaryCategories = Array.from({ length: 20 }, (_, i) => ({
-  id: i + 1,
-  name: `Category ${i + 1}`,
-}));
+import categories from '../db/categories';
 
 const StoreCategories = () => {
   return (
@@ -13,7 +9,7 @@ const StoreCategories = () => {
       </Typography>
 
       <Grid container spacing={3}>
-        {temporaryCategories.map((cat) => (
+        {categories.map((cat) => (
           <Grid item xs={3} key={cat.id}>
             <Box display="flex" flexDirection="column" alignItems="center">
               <Paper
