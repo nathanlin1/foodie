@@ -1,8 +1,10 @@
 import express from 'express';
-import {test} from './routes/test.js'
+import {getCategories} from './routes/category.js'
+import { getItemsFromCatId } from './routes/items.js';
 
 const router = new express.Router();
 
-router.get('/test', test)
+router.get('/categories', getCategories)
+router.get('/categories/items/:categoryId', getItemsFromCatId)
 
 export default router;
