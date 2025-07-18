@@ -1,22 +1,47 @@
-openapi: 3.0.0
+openapi: 3.0.3
 info:
-  title: Supabase Auth API
+  title: Foodie OpenAPI
   version: 1.0.0
 
 servers:
   - url: http://localhost:4000/api/v0
 
 paths:
-  /test:
+  /categories:
     get:
-      summary: Test route
+      summary: Get a category by ID
       responses:
         '200':
-          description: Test success
+          description: Found category
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  message:
+                  category:
                     type: string
+        '400':
+          description: Category not found
+  /categories/items/{categoryId}:
+    get:
+      summary: Get items by categoryId
+      parameters:
+        - name: categoryId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Found items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      type: string
+        '404':
+          description: Category not found
