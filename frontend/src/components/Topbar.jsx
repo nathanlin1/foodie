@@ -8,7 +8,11 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 
+import { useNavigate } from 'react-router-dom';
+
 const TopBar = () => {
+  const navigate = useNavigate();
+
   return (
     <AppBar position="sticky" color="default" elevation={1}>
       <Toolbar>
@@ -22,7 +26,14 @@ const TopBar = () => {
         <Typography
           variant="h6"
           component="div"
-          sx={{ fontWeight: 'bold', color: 'green', ml: 2, display: { xs: 'none', sm: 'block' } }}
+          sx={{
+            fontFamily: 'Aclonica',
+            fontWeight: 'bold',
+            fontSize: '32px',
+            color: 'green',
+            ml: 2,
+            display: { xs: 'none', sm: 'block' }
+          }}
         >
           Foodie
         </Typography>
@@ -34,7 +45,7 @@ const TopBar = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              p: '2px 12px',
+              p: '4px 12px',
               borderRadius: '999px',
               border: '1px solid #ccc',
             }}
@@ -48,10 +59,25 @@ const TopBar = () => {
         </Box>
 
         {/* Login Button */}
-        <Button variant="outlined" size="small" color="success">
+        <Button variant="outlined" size="small" color="success" onClick={() => navigate('/login')}
+          sx={{
+            textTransform: 'none',
+            fontSize: '18px',
+            borderRadius: '18px',
+            border: 'none',
+            backgroundColor: 'rgba(82, 184, 82, 1)',
+            color: 'white',
+            transition: 'transform 0.2 ease, background-color 0.2s ease',
+            '&:hover': {
+              backgroundColor: 'rgb(0, 128, 0)',
+              border: 'none',
+            },
+            '&:active': {
+              transform: 'scale(0.97)',
+            },
+          }}>
           Login
         </Button>
-
       </Toolbar>
     </AppBar>
   );
