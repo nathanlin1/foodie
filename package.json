@@ -2,16 +2,19 @@
   "name": "foodie",
   "version": "1.0.0",
   "description": "Track food calories and make new recipes!",
+  "type": "module",
   "scripts": {
     "install-backend": "cd backend && npm install",
     "install-frontend": "cd frontend && npm install",
     "start-backend": "cd backend && npm start",
     "start-frontend": "cd frontend && npm run dev",
-    "install-e2e": "cd e2e && npm install",
     "start": "(npm run start-backend) & (npm run start-frontend)",
-    "postinstall": "(npm run install-backend) && (npm run install-frontend) && (npm run install-e2e)"
+    "postinstall": "(npm run install-backend) && (npm run install-frontend)"
   },
   "keywords": [],
   "author": "nlin",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^9.32.0"
+  }
 }

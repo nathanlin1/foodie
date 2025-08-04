@@ -1,36 +1,33 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../supabaseClient';
-import { Box, Button, Typography, Paper } from '@mui/material';
+import { useState } from 'react';
+import { Box, Button, Typography, Paper, TextField } from '@mui/material';
+import { useAuth } from '../contexts/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const [user, setUser] = useState(null);
+  const { user, loading, errorMsg, signInWithEmail, signInWithGoogle, signOut } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession();
-      if (error) console.error('Error getting session:', error);
-      else setUser(session?.user || null);
-    };
+  // Handler to call async signInWithEmail and optionally handle response
+  const handleEmailLogin = async () => {
+    const success = await signInWithEmail(email, password);
+    if (success) { navigate('/') }
+  };
 
-    getUser();
-
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user || null);
-    });
-
-    return () => {
-      listener.subscription.unsubscribe();
-    };
-  }, []);
+  // Handler for Google login
+  const handleGoogleLogin = async () => {
+    await signInWithGoogle();
+  };
 
   return (
     <Box
       sx={{
-        height: '100vh',           // full viewport height
+        height: '100vh',
         display: 'flex',
-        justifyContent: 'center',  // center horizontally
-        alignItems: 'center',      // center vertically
-        backgroundColor: '#f3f4f6' // Tailwind gray-100 equivalent
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: '#f3f4f6',
       }}
     >
       <Paper
@@ -44,19 +41,12 @@ const Login = () => {
           backgroundColor: 'white',
           display: 'flex',
           flexDirection: 'column',
-
         }}
       >
-        {/* Foodie Title */}
-        <Typography
-          variant="h3"
-          fontWeight="bold"
-          sx={{ mb: 6, color: 'green', }}
-        >
+        <Typography variant="h3" fontWeight="bold" sx={{ mb: 6, color: 'green' }}>
           Foodie
         </Typography>
 
-        {/* Conditional content */}
         {user ? (
           <>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
@@ -65,7 +55,7 @@ const Login = () => {
             <Button
               variant="contained"
               color="error"
-              onClick={() => supabase.auth.signOut()}
+              onClick={signOut}
               sx={{ mt: 2, textTransform: 'none', borderRadius: '12px', px: 3 }}
             >
               Sign Out
@@ -76,15 +66,49 @@ const Login = () => {
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Sign in to Your Account
             </Typography>
+
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              fullWidth
+              margin="normal"
+              disabled={loading}
+            />
+
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              fullWidth
+              margin="normal"
+              disabled={loading}
+            />
+
+            {errorMsg && (
+              <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+                {errorMsg}
+              </Typography>
+            )}
+
             <Button
               variant="contained"
               color="primary"
-              onClick={() =>
-                supabase.auth.signInWithOAuth({
-                  provider: 'google',
-                })
-              }
+              onClick={handleEmailLogin}
               sx={{ mt: 2, textTransform: 'none', borderRadius: '12px', px: 3 }}
+              disabled={loading}
+            >
+              {loading ? 'Loading...' : 'Sign in'}
+            </Button>
+
+            <Button
+              variant="outlined"
+              color="primary"
+              onClick={handleGoogleLogin}
+              sx={{ mt: 3, textTransform: 'none', borderRadius: '12px', px: 3 }}
+              disabled={loading}
             >
               Sign in with Google
             </Button>
