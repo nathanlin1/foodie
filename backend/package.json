@@ -26,6 +26,7 @@
   "scripts": {
     "lint": "eslint src test --no-inline-config --max-warnings 0",
     "start": "nodemon src/server.js",
-    "test": "vitest run --no-file-parallelism --testTimeout=2000 --coverage"
+    "test": "vitest run --no-file-parallelism --testTimeout=2000 --coverage",
+    "create-user": "node scripts/createUser.js"
   }
 }

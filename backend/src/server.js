@@ -35,7 +35,7 @@ app.use(
 
 app.use('/api/v0', routes);
 
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
   res.status(err.status).json({
     message: err.message,
     errors: err.errors,
