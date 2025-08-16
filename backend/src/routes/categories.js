@@ -3,9 +3,7 @@ import supabase from "../db.js";
 export const getCategories = async (req, res) => {
     const { data } = await supabase
         .from('categories')
-        .select('name')
+        .select('id, name')
 
-    const categoryNames = data.map(category => category.name);
-
-    res.status(200).json({ categories: categoryNames });
+    res.status(200).json({ categories: data });
 };
