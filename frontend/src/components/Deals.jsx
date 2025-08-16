@@ -15,7 +15,7 @@ const Deals = () => {
             {/* Grid layout for deals */}
             <Grid container spacing={4} mt={1}>
                 {deals.map((deal) => (
-                    <Grid item xs={12} sm={6} md={4} key={deal.id}>
+                    <Grid key={deal.id}>
                         <Card elevation={2} sx={{ borderRadius: 3, p: 2 }}>
                             <CardContent>
                                 <Typography variant="h6" fontWeight="bold" gutterBottom>

@@ -21,7 +21,7 @@ const StoreCategories = () => {
         }}
       >
         {categories.map((cat) => (
-          <Grid item xs={3} key={cat.id}>
+          <Grid key={cat.id}>
             <Box display="flex" flexDirection="column" alignItems="center">
 
               {/* Square image placeholder */}

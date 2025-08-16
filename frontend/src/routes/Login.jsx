@@ -1,24 +1,36 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, Button, Typography, Paper, TextField } from '@mui/material';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
-  const { user, loading, errorMsg, signInWithEmail, signInWithGoogle, signOut } = useAuth();
+  const { user, loading, errorMsg, signInWithEmail, signInWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Handler to call async signInWithEmail and optionally handle response
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/');
+    }
+  }, [user, loading, navigate]);
+
   const handleEmailLogin = async () => {
     const success = await signInWithEmail(email, password);
-    if (success) { navigate('/') }
+    if (success) navigate('/');
   };
 
-  // Handler for Google login
   const handleGoogleLogin = async () => {
     await signInWithGoogle();
   };
+
+  if (loading) {
+    return (
+      <Box sx={{ height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Typography variant="h6">Loading...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -47,21 +59,7 @@ const Login = () => {
           Foodie
         </Typography>
 
-        {user ? (
-          <>
-            <Typography variant="h5" fontWeight="bold" gutterBottom>
-              Welcome, {user.email}
-            </Typography>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={signOut}
-              sx={{ mt: 2, textTransform: 'none', borderRadius: '12px', px: 3 }}
-            >
-              Sign Out
-            </Button>
-          </>
-        ) : (
+        {!user && (
           <>
             <Typography variant="h5" fontWeight="bold" gutterBottom>
               Sign in to Your Account
@@ -100,7 +98,7 @@ const Login = () => {
               sx={{ mt: 2, textTransform: 'none', borderRadius: '12px', px: 3 }}
               disabled={loading}
             >
-              {loading ? 'Loading...' : 'Sign in'}
+              Sign in
             </Button>
 
             <Button
