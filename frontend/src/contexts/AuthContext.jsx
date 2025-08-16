@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }) => {
 
   // Email/password login
   const signInWithEmail = async (email, password) => {
-    setLoading(true);
     setErrorMsg('');
     try {
       const res = await fetch('/api/v0/login', {
