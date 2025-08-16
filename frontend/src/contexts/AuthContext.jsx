@@ -1,17 +1,18 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(() => localStorage.getItem('token') || null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true); // <-- start in loading mode
   const [errorMsg, setErrorMsg] = useState('');
 
   // Fetch user info from backend /user endpoint using token
   const fetchUser = async (token) => {
     if (!token) {
       setUser(null);
+      setLoading(false);
       return;
     }
 
@@ -26,6 +27,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         setToken(null);
         localStorage.removeItem('token');
+        setLoading(false);
         return;
       }
 
@@ -33,6 +35,8 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
     } catch {
       setUser(null);
+    } finally {
+      setLoading(false); // <-- always stop loading after attempt
     }
   };
 
@@ -41,43 +45,40 @@ export const AuthProvider = ({ children }) => {
     fetchUser(token);
   }, [token]);
 
-  // Email/password login (calls backend /login)
-const signInWithEmail = async (email, password) => {
-  setLoading(true);
-  setErrorMsg('');
-  try {
-    const res = await fetch('/api/v0/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
-    });
+  // Email/password login
+  const signInWithEmail = async (email, password) => {
+    setLoading(true);
+    setErrorMsg('');
+    try {
+      const res = await fetch('/api/v0/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
 
+      const data = await res.json();
 
-    const data = await res.json();
+      if (!res.ok) {
+        setErrorMsg(data.error || 'Login failed');
+        setLoading(false);
+        return false;
+      }
 
-    if (!res.ok) {
-      setErrorMsg(data.error || 'Login failed');
+      // Save token and fetch user info
+      setToken(data.token);
+      localStorage.setItem('token', data.token);
+      await fetchUser(data.token);
+
+      return true;
+    } catch (err) {
+      console.error('Network error:', err);
+      setErrorMsg('Network error');
       setLoading(false);
       return false;
     }
+  };
 
-    // Save token and fetch user info
-    setToken(data.token);
-    localStorage.setItem('token', data.token);
-    await fetchUser(data.token);
-
-    setLoading(false);
-    return true;
-  } catch (err) {
-    console.error('Network error:', err); 
-    setErrorMsg('Network error');
-    setLoading(false);
-    return false;
-  }
-};
-
-
-  // Google login (calls backend /login/google, redirects browser)
+  // Google login
   const signInWithGoogle = async () => {
     setLoading(true);
     setErrorMsg('');
@@ -101,7 +102,7 @@ const signInWithEmail = async (email, password) => {
     }
   };
 
-  // Logout: clear token and user
+  // Logout
   const signOut = () => {
     setUser(null);
     setToken(null);
@@ -126,6 +127,4 @@ const signInWithEmail = async (email, password) => {
   );
 };
 
-
-// Hook for convenience
 export const useAuth = () => useContext(AuthContext);
