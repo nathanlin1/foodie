@@ -1,4 +1,4 @@
-import { beforeAll, afterAll, it, expect } from 'vitest';
+import { beforeAll, afterAll, it, expect, describe } from 'vitest';
 import supertest from 'supertest';
 import http from 'http';
 
@@ -17,8 +17,23 @@ afterAll(async () => {
   await server.close();
 });
 
-it('GET categories returns categories', async () => {
-  const res = await request.get('/api/v0/categories');
-  expect(res.status).toBe(200);
-  expect(res.body.categories).toContain('Meat');
+describe('GET /categories', () => {
+  it('200 error code', async () => {
+    const res = await request.get('/api/v0/categories');
+    expect(res.status).toBe(200);
+    console.log(res.body.categories)
+    // expect(res.body.categories).toContain('Meat');
+  });
+
+  it('contains names and ids', async () => {
+    const res = await request.get('/api/v0/categories');
+
+    res.body.categories.forEach(cat => {
+      expect(cat).toHaveProperty('id')
+      expect(cat).toHaveProperty('name')
+    })
+
+    const names = res.body.categories.map(cat => cat.name);
+    expect(names).toContain('Meat');
+  });
 });
